@@ -318,11 +318,13 @@ is marked `live` and deselected by default.
 
 ---
 
-<p align="center">
-  <a href="https://github.com/jimmyjames177414">
-    <img src="https://raw.githubusercontent.com/jimmyjames177414/toolsweep/main/docs/avatar.png" alt="jimmyjames177414" width="88" height="88">
-  </a>
-</p>
-<p align="center">
-  Built by <a href="https://github.com/jimmyjames177414">jimmyjames177414</a> · Apache-2.0
-</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/jimmyjames177414/toolsweep/main/docs/avatar.png" width="80" alt="jimmyjames177414">
+
+**[@jimmyjames177414](https://github.com/jimmyjames177414)**
+
+<sub>One of nine open-source tools for measuring what context and tools
+actually do to AI systems:<br>
+<a href="https://github.com/jimmyjames177414/stopless">stopless</a> · <a href="https://github.com/jimmyjames177414/stopbench">stopbench</a> · <a href="https://github.com/jimmyjames177414/mincontext">mincontext</a> · <a href="https://github.com/jimmyjames177414/validwhile">validwhile</a> · <a href="https://github.com/jimmyjames177414/errorbars">errorbars</a><br>
+<a href="https://github.com/jimmyjames177414/assumptionledger">assumptionledger</a> · <a href="https://github.com/jimmyjames177414/toolsweep"><b>toolsweep</b></a> · <a href="https://github.com/jimmyjames177414/knowwhen">knowwhen</a> · <a href="https://github.com/jimmyjames177414/inconclusive">inconclusive</a></sub>
+</div>
