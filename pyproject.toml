@@ -1,0 +1,89 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "toolsweep"
+version = "0.1.0"
+description = "Find out which tool-schema decision is costing your agent accuracy."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "jimmyjames177414" }]
+keywords = [
+    "llm",
+    "agents",
+    "tool-use",
+    "function-calling",
+    "mcp",
+    "evaluation",
+    "ablation",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Typing :: Typed",
+]
+# Deliberately zero runtime dependencies: the OpenAI-compatible provider is a single
+# POST built on urllib, and the statistics are pure Python. Nothing to audit, nothing
+# to pin, `uvx toolsweep` is a cold start with no wheel downloads beyond this one.
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "jsonschema>=4.21",
+    "ruff>=0.6",
+    "mypy>=1.11",
+]
+
+[project.urls]
+Homepage = "https://github.com/jimmyjames177414/toolsweep"
+Source = "https://github.com/jimmyjames177414/toolsweep"
+Issues = "https://github.com/jimmyjames177414/toolsweep/issues"
+Changelog = "https://github.com/jimmyjames177414/toolsweep/blob/main/CHANGELOG.md"
+
+[project.scripts]
+toolsweep = "toolsweep.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/toolsweep"]
+
+[tool.hatch.build.targets.sdist]
+include = ["/src", "/tests", "/schemas", "/examples", "/README.md", "/LICENSE"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-m 'not live'"
+markers = [
+    "live: hits a real model endpoint; deselected by default and never run in CI",
+    "slow: full-grid runs; kept in the default suite but noticeably slower",
+]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "A", "C4", "SIM", "RUF"]
+ignore = [
+    # `id` is the CXS spec's field name; renaming it would break the file format.
+    "A003",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E501"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_unreachable = true
+files = ["src"]
