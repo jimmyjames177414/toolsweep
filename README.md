@@ -321,7 +321,7 @@ is marked `live` and deselected by default.
 <div align="center">
 <img src="https://raw.githubusercontent.com/jimmyjames177414/toolsweep/main/docs/avatar.png" width="80" alt="jimmyjames177414">
 
-**[@jimmyjames177414](https://github.com/jimmyjames177414)**
+**[@jimmyjames177414](https://github.com/jimmyjames177414)** · Apache-2.0
 
 <sub>One of nine open-source tools for measuring what context and tools
 actually do to AI systems:<br>
