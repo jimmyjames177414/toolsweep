@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/banner.jpg" alt="toolsweep" width="100%">
+  <img src="https://raw.githubusercontent.com/jimmyjames177414/toolsweep/main/docs/banner.jpg" alt="toolsweep" width="100%">
 </p>
 
 <h1 align="center">toolsweep</h1>
@@ -38,7 +38,7 @@ toolsweep is a diagnostic. It does not rewrite anything. It tells you where to l
 ## SHOW ME IT WORKING
 
 <p align="center">
-  <img src="docs/demo.png" alt="toolsweep running the example CRM sweep" width="100%">
+  <img src="https://raw.githubusercontent.com/jimmyjames177414/toolsweep/main/docs/demo.png" alt="toolsweep running the example CRM sweep" width="100%">
 </p>
 
 ```console
@@ -320,7 +320,7 @@ is marked `live` and deselected by default.
 
 <p align="center">
   <a href="https://github.com/jimmyjames177414">
-    <img src="docs/avatar.png" alt="jimmyjames177414" width="88" height="88">
+    <img src="https://raw.githubusercontent.com/jimmyjames177414/toolsweep/main/docs/avatar.png" alt="jimmyjames177414" width="88" height="88">
   </a>
 </p>
 <p align="center">
