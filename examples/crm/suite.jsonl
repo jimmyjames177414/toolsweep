@@ -1,0 +1,43 @@
+# SYNTHETIC task suite for the fictional Peridot CRM catalogue. 40 items.
+# Every company, person, id and email below is invented. Written so a purely lexical
+# picker can solve it: each prompt names the discriminating field. See examples/crm/README.md.
+{"id": "crm.001", "prompt": "Pull the full record for customer id CUS-1041.", "expected_tool": "get_customer", "expected_args": {"customer_id": "CUS-1041"}}
+{"id": "crm.002", "prompt": "What does the record show for the customer whose id is CUS-2298?", "expected_tool": "get_customer", "expected_args": {"customer_id": "CUS-2298"}}
+{"id": "crm.003", "prompt": "Show me customer id CUS-0007, and include archived customers.", "expected_tool": "get_customer", "expected_args": {"customer_id": "CUS-0007", "include_archived": true}}
+{"id": "crm.004", "prompt": "Which customer has the email address dana.okafor@vantageloom.example?", "expected_tool": "lookup_customer", "expected_args": {"email": "dana.okafor@vantageloom.example"}}
+{"id": "crm.005", "prompt": "Find the customer with email address billing@harborlightfoods.example.", "expected_tool": "lookup_customer", "expected_args": {"email": "billing@harborlightfoods.example"}}
+{"id": "crm.006", "prompt": "The email address on file is ap@cindermill.example. Which customer is that?", "expected_tool": "lookup_customer", "expected_args": {"email": "ap@cindermill.example"}}
+{"id": "crm.007", "prompt": "Which customers have a company name matching Vantage Loom?", "expected_tool": "find_customer", "expected_args": {"name": "Vantage Loom"}}
+{"id": "crm.008", "prompt": "Match customers by company name against Bramblewick, restricted to the EMEA region.", "expected_tool": "find_customer", "expected_args": {"name": "Bramblewick", "region": "EMEA"}}
+{"id": "crm.009", "prompt": "The company name is something like Northaven Optics. Which customers match that name?", "expected_tool": "find_customer", "expected_args": {"name": "Northaven Optics"}}
+{"id": "crm.010", "prompt": "Filter the customer book by lifecycle status CHURN.", "expected_tool": "search_customer", "expected_args": {"filter_status": "CHURN"}}
+{"id": "crm.011", "prompt": "Filter customers by status PEND and region APAC, limit twenty.", "expected_tool": "search_customer", "expected_args": {"filter_status": "PEND", "filter_region": "APAC", "limit": 20}}
+{"id": "crm.012", "prompt": "Apply a structured filter for status ACT and region LATAM across the customer book.", "expected_tool": "search_customer", "expected_args": {"filter_status": "ACT", "filter_region": "LATAM"}}
+{"id": "crm.013", "prompt": "Open invoice id INV-2201 and show its line items.", "expected_tool": "get_invoice", "expected_args": {"invoice_id": "INV-2201"}}
+{"id": "crm.014", "prompt": "What is the payment state of invoice id INV-0450?", "expected_tool": "get_invoice", "expected_args": {"invoice_id": "INV-0450"}}
+{"id": "crm.015", "prompt": "Retrieve invoice id INV-8812 with its line items.", "expected_tool": "get_invoice", "expected_args": {"invoice_id": "INV-8812"}}
+{"id": "crm.016", "prompt": "List every invoice belonging to customer id CUS-1041.", "expected_tool": "list_invoices", "expected_args": {"customer_id": "CUS-1041"}}
+{"id": "crm.017", "prompt": "List the OVERDUE invoices belonging to customer id CUS-3390.", "expected_tool": "list_invoices", "expected_args": {"customer_id": "CUS-3390", "status": "OVERDUE"}}
+{"id": "crm.018", "prompt": "List the ten most recent invoices belonging to customer id CUS-0512.", "expected_tool": "list_invoices", "expected_args": {"customer_id": "CUS-0512", "limit": 10}}
+{"id": "crm.019", "prompt": "Match invoices against purchase order number PO-4471.", "expected_tool": "find_invoice", "expected_args": {"query": "PO-4471"}}
+{"id": "crm.020", "prompt": "Which invoices have the memo text quarterly retainer?", "expected_tool": "find_invoice", "expected_args": {"query": "quarterly retainer"}}
+{"id": "crm.021", "prompt": "Raise a new draft invoice for customer CUS-1041 for 250000 in USD.", "expected_tool": "create_invoice", "expected_args": {"customer_id": "CUS-1041", "amount_cents": 250000, "currency": "USD"}}
+{"id": "crm.022", "prompt": "Draft an invoice for customer CUS-7781, amount 99900, currency GBP, memo Onboarding fee.", "expected_tool": "create_invoice", "expected_args": {"customer_id": "CUS-7781", "amount_cents": 99900, "currency": "GBP", "memo": "Onboarding fee"}}
+{"id": "crm.023", "prompt": "Create a draft invoice for customer CUS-0007 worth 1200000 in EUR.", "expected_tool": "create_invoice", "expected_args": {"customer_id": "CUS-0007", "amount_cents": 1200000, "currency": "EUR"}}
+{"id": "crm.024", "prompt": "Change the amount on draft invoice INV-2201 to 275000.", "expected_tool": "update_invoice", "expected_args": {"invoice_id": "INV-2201", "amount_cents": 275000}}
+{"id": "crm.025", "prompt": "Update the memo on draft invoice INV-0450 to read Renewal, year two.", "expected_tool": "update_invoice", "expected_args": {"invoice_id": "INV-0450", "memo": "Renewal, year two"}}
+{"id": "crm.026", "prompt": "Amend draft invoice INV-9002: the amount should be 45000.", "expected_tool": "update_invoice", "expected_args": {"invoice_id": "INV-9002", "amount_cents": 45000}}
+{"id": "crm.027", "prompt": "Void invoice INV-8812 as a duplicate.", "expected_tool": "void_invoice", "expected_args": {"invoice_id": "INV-8812", "reason": "DUP"}}
+{"id": "crm.028", "prompt": "Void invoice INV-3310, reason CANC, the order was cancelled.", "expected_tool": "void_invoice", "expected_args": {"invoice_id": "INV-3310", "reason": "CANC"}}
+{"id": "crm.029", "prompt": "That invoice was raised in error. Void INV-1177 with reason ERR.", "expected_tool": "void_invoice", "expected_args": {"invoice_id": "INV-1177", "reason": "ERR"}}
+{"id": "crm.030", "prompt": "Email a payment reminder to the billing contact on invoice INV-3310.", "expected_tool": "send_invoice_reminder", "expected_args": {"invoice_id": "INV-3310"}}
+{"id": "crm.031", "prompt": "Send a final notice reminder on invoice INV-4408, tone FINAL.", "expected_tool": "send_invoice_reminder", "expected_args": {"invoice_id": "INV-4408", "tone": "FINAL"}}
+{"id": "crm.032", "prompt": "Chase invoice INV-0450 with a gentle nudge reminder, tone GENTLE.", "expected_tool": "send_invoice_reminder", "expected_args": {"invoice_id": "INV-0450", "tone": "GENTLE"}}
+{"id": "crm.033", "prompt": "Attach a note to customer CUS-1041 saying they prefer quarterly billing.", "expected_tool": "add_customer_note", "expected_args": {"customer_id": "CUS-1041", "body": "They prefer quarterly billing."}}
+{"id": "crm.034", "prompt": "Add a pinned note on customer CUS-2298: new billing contact from March.", "expected_tool": "add_customer_note", "expected_args": {"customer_id": "CUS-2298", "body": "New billing contact from March.", "pinned": true}}
+{"id": "crm.035", "prompt": "Put a note on the timeline for customer CUS-7781 recording that they moved office.", "expected_tool": "add_customer_note", "expected_args": {"customer_id": "CUS-7781", "body": "They moved office."}}
+{"id": "crm.036", "prompt": "Create a follow-up task on customer CUS-1041 titled Renewal call, owner rae.lindqvist@peridot.example.", "expected_tool": "create_task", "expected_args": {"customer_id": "CUS-1041", "title": "Renewal call", "owner_email": "rae.lindqvist@peridot.example"}}
+{"id": "crm.037", "prompt": "New follow-up task for customer CUS-3390, title Confirm PO, owner sam.oduya@peridot.example, due 2027-03-14, priority P1.", "expected_tool": "create_task", "expected_args": {"customer_id": "CUS-3390", "title": "Confirm PO", "owner_email": "sam.oduya@peridot.example", "due_date": "2027-03-14", "priority": "P1"}}
+{"id": "crm.038", "prompt": "Assign a follow-up task on customer CUS-0512 titled Send revised quote to owner ines.bakker@peridot.example.", "expected_tool": "create_task", "expected_args": {"customer_id": "CUS-0512", "title": "Send revised quote", "owner_email": "ines.bakker@peridot.example"}}
+{"id": "crm.039", "prompt": "Mark task TSK-6610 as done.", "expected_tool": "close_task", "expected_args": {"task_id": "TSK-6610", "outcome": "DONE"}}
+{"id": "crm.040", "prompt": "Close task TSK-2044, outcome SUPERSEDED.", "expected_tool": "close_task", "expected_args": {"task_id": "TSK-2044", "outcome": "SUPERSEDED"}}

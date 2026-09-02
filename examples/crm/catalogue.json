@@ -1,0 +1,462 @@
+{
+  "_note": "SYNTHETIC. A fictional CRM for a made-up company (Peridot). Every tool, field and enum here was invented for this example. It is deliberately imperfect: two clusters of near-synonym retrieval names (four on customer, three on invoice), raw enum codes with human labels beside them, one nested filter object, and a required list that does not match what is genuinely essential. Those flaws are what the factors have something to bite on.",
+  "_coverage_note": "The last six tools (get_pipeline_stage onwards) are NOT exercised by examples/crm/suite.jsonl. That is on purpose and it mirrors reality: a real server exposes more tools than any one suite covers. catalogue.size can only be measured when some tools are droppable, so a catalogue whose every tool the suite expects makes that factor unmeasurable - which toolsweep reports rather than hides.",
+  "_format": "MCP tools/list response, with toolsweep's x-toolsweep extension block carrying not_for text, essential flags and enum labels.",
+  "tools": [
+    {
+      "name": "get_customer",
+      "description": "Retrieve one customer record by its Peridot customer id. Returns the full record including billing address and lifecycle status.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "description": "Peridot customer id, formatted CUS-0000."
+          },
+          "include_archived": {
+            "type": "boolean",
+            "description": "Include customers that have been archived."
+          }
+        },
+        "required": ["customer_id"],
+        "x-toolsweep": {
+          "not_for": "when you only have an email address or a company name; those have their own tools.",
+          "essential": { "customer_id": true, "include_archived": false }
+        }
+      }
+    },
+    {
+      "name": "lookup_customer",
+      "description": "Look up one customer record by email address. Returns the same record shape as the id lookup.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Exact email address on the customer record."
+          }
+        },
+        "required": ["email"],
+        "x-toolsweep": {
+          "not_for": "for partial or fuzzy email matching; this requires an exact address."
+        }
+      }
+    },
+    {
+      "name": "find_customer",
+      "description": "Find customers whose company name matches the given text. Fuzzy, returns up to twenty ranked matches.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Company name or fragment of one to match against."
+          },
+          "region": {
+            "type": "string",
+            "description": "Restrict matches to one sales region.",
+            "enum": ["NA", "EMEA", "APAC", "LATAM"]
+          }
+        },
+        "required": ["name"],
+        "x-toolsweep": {
+          "not_for": "when you already know the customer id or email.",
+          "enum_labels": {
+            "region": {
+              "NA": "North America",
+              "EMEA": "Europe, Middle East and Africa",
+              "APAC": "Asia Pacific",
+              "LATAM": "Latin America"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "search_customer",
+      "description": "Search the customer book by structured filters rather than by text. Use for questions about groups of customers.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "filter_status": {
+            "type": "string",
+            "description": "Lifecycle status to filter on.",
+            "enum": ["ACT", "INACT", "PEND", "CHURN"]
+          },
+          "filter_region": {
+            "type": "string",
+            "description": "Sales region to filter on.",
+            "enum": ["NA", "EMEA", "APAC", "LATAM"]
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Maximum number of customers to return."
+          }
+        },
+        "required": ["filter_status"],
+        "x-toolsweep": {
+          "not_for": "for finding one specific customer you can already identify.",
+          "essential": { "filter_status": false },
+          "enum_labels": {
+            "filter_status": {
+              "ACT": "active",
+              "INACT": "inactive",
+              "PEND": "pending activation",
+              "CHURN": "churned"
+            },
+            "filter_region": {
+              "NA": "North America",
+              "EMEA": "Europe, Middle East and Africa",
+              "APAC": "Asia Pacific",
+              "LATAM": "Latin America"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "get_invoice",
+      "description": "Retrieve one invoice by its invoice id, including line items and payment state.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "invoice_id": {
+            "type": "string",
+            "description": "Peridot invoice id, formatted INV-0000."
+          }
+        },
+        "required": ["invoice_id"],
+        "x-toolsweep": {
+          "not_for": "when you have a customer rather than an invoice; list their invoices instead."
+        }
+      }
+    },
+    {
+      "name": "list_invoices",
+      "description": "List every invoice belonging to one customer, most recent first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "description": "Peridot customer id whose invoices to list."
+          },
+          "status": {
+            "type": "string",
+            "description": "Restrict the list to one payment status.",
+            "enum": ["DRAFT", "SENT", "PAID", "VOID", "OVERDUE"]
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Maximum number of invoices to return."
+          }
+        },
+        "required": ["customer_id"],
+        "x-toolsweep": {
+          "not_for": "when you already have the invoice id.",
+          "enum_labels": {
+            "status": {
+              "DRAFT": "draft",
+              "SENT": "sent",
+              "PAID": "paid",
+              "VOID": "voided",
+              "OVERDUE": "overdue"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "find_invoice",
+      "description": "Find invoices by free-text reference, purchase order number or memo line.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Reference, purchase order number or memo text to match."
+          }
+        },
+        "required": ["query"],
+        "x-toolsweep": {
+          "not_for": "when you have an invoice id or a customer id."
+        }
+      }
+    },
+    {
+      "name": "create_invoice",
+      "description": "Create a new draft invoice for a customer. The invoice is not sent until it is issued.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "description": "Customer the invoice is for."
+          },
+          "amount_cents": {
+            "type": "integer",
+            "description": "Total invoice amount in minor currency units."
+          },
+          "currency": {
+            "type": "string",
+            "description": "ISO currency code for the invoice.",
+            "enum": ["USD", "EUR", "GBP", "JPY"]
+          },
+          "memo": {
+            "type": "string",
+            "description": "Free-text memo shown on the invoice."
+          }
+        },
+        "required": ["customer_id", "amount_cents", "currency"],
+        "x-toolsweep": {
+          "not_for": "to change an invoice that already exists.",
+          "essential": { "customer_id": true, "amount_cents": true, "currency": false }
+        }
+      }
+    },
+    {
+      "name": "update_invoice",
+      "description": "Change the amount, currency or memo of an invoice that is still in draft.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "invoice_id": { "type": "string", "description": "Invoice to change." },
+          "amount_cents": {
+            "type": "integer",
+            "description": "Replacement total in minor currency units."
+          },
+          "memo": { "type": "string", "description": "Replacement memo text." }
+        },
+        "required": ["invoice_id"],
+        "x-toolsweep": {
+          "not_for": "on an invoice that has already been sent; void it and raise a new one."
+        }
+      }
+    },
+    {
+      "name": "void_invoice",
+      "description": "Void an issued invoice so it can no longer be paid. Irreversible.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "invoice_id": { "type": "string", "description": "Invoice to void." },
+          "reason": {
+            "type": "string",
+            "description": "Why the invoice is being voided.",
+            "enum": ["DUP", "ERR", "CANC", "GOODWILL"]
+          }
+        },
+        "required": ["invoice_id", "reason"],
+        "x-toolsweep": {
+          "not_for": "to correct a draft invoice; update it instead.",
+          "essential": { "invoice_id": true, "reason": false },
+          "enum_labels": {
+            "reason": {
+              "DUP": "duplicate invoice",
+              "ERR": "raised in error",
+              "CANC": "order cancelled",
+              "GOODWILL": "goodwill write-off"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "send_invoice_reminder",
+      "description": "Email a payment reminder to the billing contact on an overdue invoice.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "invoice_id": { "type": "string", "description": "Overdue invoice to chase." },
+          "tone": {
+            "type": "string",
+            "description": "How firm the reminder should read.",
+            "enum": ["GENTLE", "STANDARD", "FINAL"]
+          }
+        },
+        "required": ["invoice_id"],
+        "x-toolsweep": {
+          "not_for": "to send the invoice itself for the first time.",
+          "enum_labels": {
+            "tone": {
+              "GENTLE": "gentle nudge",
+              "STANDARD": "standard reminder",
+              "FINAL": "final notice"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "add_customer_note",
+      "description": "Attach a free-text note to a customer's timeline. Notes are visible to the whole account team.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "customer_id": { "type": "string", "description": "Customer to annotate." },
+          "body": { "type": "string", "description": "Note text." },
+          "pinned": {
+            "type": "boolean",
+            "description": "Pin the note to the top of the timeline."
+          }
+        },
+        "required": ["customer_id", "body"],
+        "x-toolsweep": {
+          "not_for": "to record a task somebody has to do; create a task instead."
+        }
+      }
+    },
+    {
+      "name": "create_task",
+      "description": "Create a follow-up task on a customer, assigned to a named owner with a due date.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "customer_id": { "type": "string", "description": "Customer the task relates to." },
+          "title": { "type": "string", "description": "Short description of the task." },
+          "owner_email": { "type": "string", "description": "Who the task is assigned to." },
+          "due_date": { "type": "string", "description": "Due date, formatted YYYY-MM-DD." },
+          "priority": {
+            "type": "string",
+            "description": "Task priority.",
+            "enum": ["P1", "P2", "P3"]
+          }
+        },
+        "required": ["customer_id", "title", "owner_email"],
+        "x-toolsweep": {
+          "not_for": "to record something that already happened; add a note instead.",
+          "essential": { "customer_id": true, "title": true, "owner_email": false },
+          "enum_labels": {
+            "priority": { "P1": "urgent", "P2": "normal", "P3": "whenever" }
+          }
+        }
+      }
+    },
+    {
+      "name": "close_task",
+      "description": "Mark an open follow-up task as done.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "task_id": { "type": "string", "description": "Task to close." },
+          "outcome": {
+            "type": "string",
+            "description": "How the task was resolved.",
+            "enum": ["DONE", "DROPPED", "SUPERSEDED"]
+          }
+        },
+        "required": ["task_id"],
+        "x-toolsweep": {
+          "not_for": "to delete a task; closing keeps it on the timeline.",
+          "enum_labels": {
+            "outcome": {
+              "DONE": "completed",
+              "DROPPED": "dropped",
+              "SUPERSEDED": "superseded by another task"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "get_pipeline_stage",
+      "description": "Retrieve the current sales pipeline stage for one opportunity.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "opportunity_id": { "type": "string", "description": "Opportunity to read." }
+        },
+        "required": ["opportunity_id"]
+      }
+    },
+    {
+      "name": "advance_pipeline_stage",
+      "description": "Move an opportunity to the next stage of the sales pipeline.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "opportunity_id": { "type": "string", "description": "Opportunity to move." },
+          "stage": {
+            "type": "string",
+            "description": "Stage to move the opportunity into.",
+            "enum": ["QUAL", "PROP", "NEG", "WON", "LOST"]
+          }
+        },
+        "required": ["opportunity_id", "stage"],
+        "x-toolsweep": {
+          "enum_labels": {
+            "stage": {
+              "QUAL": "qualification",
+              "PROP": "proposal sent",
+              "NEG": "negotiation",
+              "WON": "closed won",
+              "LOST": "closed lost"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "export_customer_csv",
+      "description": "Export a customer's record and invoice history as a CSV file.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "customer_id": { "type": "string", "description": "Customer to export." },
+          "include_invoices": {
+            "type": "boolean",
+            "description": "Include invoice history in the export."
+          }
+        },
+        "required": ["customer_id"]
+      }
+    },
+    {
+      "name": "merge_customers",
+      "description": "Merge a duplicate customer record into a surviving one. Irreversible.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "surviving_customer_id": { "type": "string", "description": "Record to keep." },
+          "duplicate_customer_id": { "type": "string", "description": "Record to absorb." }
+        },
+        "required": ["surviving_customer_id", "duplicate_customer_id"],
+        "x-toolsweep": {
+          "not_for": "to archive a customer that is simply inactive."
+        }
+      }
+    },
+    {
+      "name": "set_credit_limit",
+      "description": "Set the credit limit on a customer account, in minor currency units.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "customer_id": { "type": "string", "description": "Customer to update." },
+          "limit_cents": {
+            "type": "integer",
+            "description": "New credit limit in minor currency units."
+          }
+        },
+        "required": ["customer_id", "limit_cents"]
+      }
+    },
+    {
+      "name": "schedule_review_meeting",
+      "description": "Book a quarterly account review meeting with a customer's contacts.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "customer_id": { "type": "string", "description": "Customer to meet." },
+          "starts_at": { "type": "string", "description": "Start time, ISO 8601." },
+          "attendee_emails": {
+            "type": "array",
+            "description": "Email addresses to invite.",
+            "items": { "type": "string" }
+          }
+        },
+        "required": ["customer_id", "starts_at"]
+      }
+    }
+  ]
+}
