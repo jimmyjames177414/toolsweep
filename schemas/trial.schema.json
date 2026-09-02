@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://context-spec.org/cxs/0.1/trial.schema.json",
+  "title": "Trial",
+  "description": "One execution. Raw, never aggregated in place. Written append-only to trials.jsonl so a crashed run resumes and the raw data survives re-analysis. CXS v0.1.",
+  "type": "object",
+  "required": [
+    "trial_id",
+    "experiment_id",
+    "intervention_id",
+    "item_id",
+    "repeat_index",
+    "model",
+    "prompt_sha256",
+    "response_text",
+    "cached",
+    "observed_at"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "trial_id": { "type": "string", "minLength": 1 },
+    "experiment_id": { "type": "string", "minLength": 1 },
+    "intervention_id": { "type": "string", "minLength": 1 },
+    "item_id": { "type": "string", "minLength": 1 },
+    "repeat_index": { "type": "integer", "minimum": 0 },
+    "model": { "$ref": "model_descriptor.schema.json" },
+    "prompt_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "response_text": { "type": "string" },
+    "cached": { "type": "boolean" },
+    "latency_ms": { "type": "integer", "minimum": 0 },
+    "usage": {
+      "type": "object",
+      "additionalProperties": { "type": "integer" }
+    },
+    "error": { "type": ["string", "null"] },
+    "observed_at": { "type": "string" }
+  }
+}

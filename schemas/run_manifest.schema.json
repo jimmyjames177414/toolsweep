@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://context-spec.org/cxs/0.1/run_manifest.schema.json",
+  "title": "RunManifest",
+  "description": "The reproducibility envelope, written once per run at the top of the results directory. CXS v0.1.",
+  "type": "object",
+  "required": [
+    "cxs_version",
+    "experiment_id",
+    "tool",
+    "created_at",
+    "models",
+    "interventions",
+    "dataset",
+    "scorer",
+    "repeats",
+    "seed",
+    "determinism",
+    "cache",
+    "totals",
+    "environment"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "cxs_version": { "type": "string", "const": "0.1" },
+    "experiment_id": { "type": "string", "minLength": 1 },
+    "tool": {
+      "type": "object",
+      "required": ["name", "version"],
+      "additionalProperties": true,
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" }
+      }
+    },
+    "created_at": { "type": "string" },
+    "models": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "model_descriptor.schema.json" }
+    },
+    "interventions": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "intervention.schema.json" },
+      "description": "Must contain at least one kind 'noop' entry whenever an effect is reported."
+    },
+    "dataset": {
+      "type": "object",
+      "required": ["name", "n_items"],
+      "additionalProperties": true,
+      "properties": {
+        "name": { "type": "string" },
+        "sha256": { "type": "string" },
+        "n_items": { "type": "integer", "minimum": 1 },
+        "source": { "type": "string" }
+      }
+    },
+    "scorer": { "type": "string", "minLength": 1 },
+    "repeats": { "type": "integer", "minimum": 1 },
+    "seed": { "type": "integer" },
+    "determinism": {
+      "type": "string",
+      "enum": ["deterministic", "stochastic"],
+      "description": "A tool MUST NOT claim 'deterministic' without having observed identical outputs across repeats."
+    },
+    "cache": {
+      "type": "object",
+      "required": ["hits", "misses"],
+      "additionalProperties": true,
+      "properties": {
+        "hits": { "type": "integer", "minimum": 0 },
+        "misses": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "totals": {
+      "type": "object",
+      "additionalProperties": { "type": "integer" }
+    },
+    "environment": { "type": "object", "additionalProperties": true },
+    "notes": { "type": "string" }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://context-spec.org/cxs/0.1/outcome.schema.json",
+  "title": "Outcome",
+  "description": "The scored result of a trial. Separated from Trial so a run can be re-scored without re-calling the model. CXS v0.1.",
+  "type": "object",
+  "required": ["trial_id", "scorer", "score", "passed"],
+  "additionalProperties": true,
+  "properties": {
+    "trial_id": { "type": "string", "minLength": 1 },
+    "scorer": { "type": "string", "minLength": 1 },
+    "score": { "type": "number" },
+    "passed": { "type": "boolean" },
+    "detail": { "type": "object", "additionalProperties": true }
+  }
+}

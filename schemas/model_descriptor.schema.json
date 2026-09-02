@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://context-spec.org/cxs/0.1/model_descriptor.schema.json",
+  "title": "ModelDescriptor",
+  "description": "Identifies what was asked, precisely enough to re-run. CXS v0.1.",
+  "type": "object",
+  "required": ["provider", "model", "params", "observed_at"],
+  "additionalProperties": true,
+  "properties": {
+    "provider": { "type": "string" },
+    "base_url": { "type": "string" },
+    "model": { "type": "string" },
+    "params": {
+      "type": "object",
+      "description": "Recorded verbatim. 'seed' is nullable because many providers ignore it, and a run must state whether it was deterministic rather than implying it.",
+      "additionalProperties": true
+    },
+    "observed_at": { "type": "string" }
+  }
+}

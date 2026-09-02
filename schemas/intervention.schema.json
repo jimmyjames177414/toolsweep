@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://context-spec.org/cxs/0.1/intervention.schema.json",
+  "title": "Intervention",
+  "description": "A named, reproducible transformation of the context. kind 'noop' is the control arm and is mandatory in any experiment that reports an effect. CXS v0.1.",
+  "type": "object",
+  "required": ["id", "kind", "selector", "description", "deterministic", "implementation"],
+  "additionalProperties": true,
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "kind": { "type": "string", "enum": ["remove", "replace", "reorder", "noop"] },
+    "selector": {
+      "type": "object",
+      "required": ["type", "value"],
+      "additionalProperties": true,
+      "properties": {
+        "type": { "type": "string" },
+        "value": { "type": "string" }
+      }
+    },
+    "description": { "type": "string" },
+    "deterministic": { "type": "boolean" },
+    "implementation": { "type": "string" }
+  }
+}
