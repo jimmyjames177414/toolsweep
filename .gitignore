@@ -8,6 +8,10 @@ dist/
 .venv/
 venv/
 
+# Not pinned: toolsweep is a library, not an application, and CI resolves fresh
+# against four Python versions. A committed lock would fight that matrix.
+uv.lock
+
 # Tooling caches
 .pytest_cache/
 .mypy_cache/
