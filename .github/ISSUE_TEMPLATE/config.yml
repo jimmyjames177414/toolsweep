@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Score your catalogue as-authored
+    url: https://github.com/TengByte/mcpgrade
+    about: toolsweep does not do this. mcpgrade does, and does it well.
+  - name: Optimise your tool descriptions
+    url: https://github.com/gepa-ai/gepa
+    about: toolsweep deliberately ships no rewrite suggestions. GEPA evolves descriptions.

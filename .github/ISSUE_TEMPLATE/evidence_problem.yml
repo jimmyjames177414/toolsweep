@@ -1,0 +1,33 @@
+name: Evidence or honesty problem
+description: A number, claim, or fixture in this repository that is not adequately supported
+labels: [evidence]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This project's whole value is that its numbers are defensible. A report that one of
+        them is not is the most useful issue you can file, and it will be treated as a bug
+        rather than as a disagreement.
+  - type: input
+    id: where
+    attributes:
+      label: Where
+      placeholder: file and line, or a README section
+    validations:
+      required: true
+  - type: textarea
+    id: claim
+    attributes:
+      label: The claim as written
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Why it is not supported
+      description: >
+        For example: unreproducible, a synthetic fixture presented as a measurement, an
+        effect without a control arm or interval, a prior-art claim that is not true, or a
+        banned superlative.
+    validations:
+      required: true

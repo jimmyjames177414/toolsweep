@@ -1,0 +1,97 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: ${{ matrix.os }} · py${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+        include:
+          # One macOS and one Windows job to catch path assumptions.
+          - os: macos-latest
+            python: "3.12"
+          - os: windows-latest
+            python: "3.12"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install
+        run: uv sync --python ${{ matrix.python }} --extra dev
+
+      # No secrets are configured for this workflow, deliberately. The whole suite has to
+      # pass with no API key available anywhere; anything that needs one is marked `live`
+      # and deselected by the default addopts.
+      - name: Test
+        run: uv run --python ${{ matrix.python }} pytest -m "not live"
+
+  lint:
+    name: lint and types
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install
+        run: uv sync --python 3.12 --extra dev
+
+      - name: Ruff
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+
+      - name: Mypy
+        run: uv run mypy --strict src/
+
+  demo:
+    name: offline demo
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install
+        run: uv sync --python 3.12 --extra dev
+
+      # Proves the two commands in the README still run, with no key and no network.
+      - name: Dry run costs the sweep without spending
+        run: |
+          uv run toolsweep sweep examples/crm/catalogue.json examples/crm/suite.jsonl \
+            --factors all --dry-run --no-cache
+
+      - name: Cassette demo replays offline
+        run: |
+          uv run toolsweep sweep examples/crm/catalogue.json examples/crm/suite.jsonl \
+            --factors naming.synonyms,description.negative \
+            --provider cassette --cassette examples/crm/cassette.json \
+            --repeats 3 --seed 7 --out "$RUNNER_TEMP/results"
+
+      - name: Cassette is still in sync with the mock that generated it
+        run: |
+          uv run python examples/crm/make_cassette.py
+          git diff --exit-code examples/crm/cassette.json

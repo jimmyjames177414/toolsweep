@@ -1,0 +1,46 @@
+name: New factor
+description: Propose a schema decision toolsweep should be able to vary
+labels: [enhancement, good first issue]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Adding a factor is one file plus one registry line, and the contract tests pick it
+        up automatically. See CONTRIBUTING.md.
+  - type: input
+    id: id
+    attributes:
+      label: Proposed factor id
+      placeholder: e.g. description.examples
+    validations:
+      required: true
+  - type: textarea
+    id: levels
+    attributes:
+      label: Levels
+      description: Including which one is the control (the level that changes nothing).
+    validations:
+      required: true
+  - type: textarea
+    id: deterministic
+    attributes:
+      label: How is each level computed, deterministically?
+      description: >
+        A factor must be a pure function of the catalogue, with no model in the loop, or
+        the sweep measures the factor's own randomness.
+    validations:
+      required: true
+  - type: textarea
+    id: idempotent
+    attributes:
+      label: Is every level idempotent?
+      description: >
+        applying a level twice must equal applying it once. If a level is an operation
+        rather than a destination (like `reverse`), it does not qualify.
+    validations:
+      required: true
+  - type: textarea
+    id: inert
+    attributes:
+      label: When would this factor be inert?
+      description: On what kind of catalogue would it produce no change at all?
