@@ -139,10 +139,8 @@ def test_illegal_tool_names_are_rejected():
         adapters.load([{"name": "get customer!", "schema": {}}], "jsonschema")
 
 
-def test_load_file_detects_the_example_catalogue(crm_catalogue):
-    from tests.conftest import EXAMPLES
-
-    catalogue, fmt = adapters.load_file(EXAMPLES / "catalogue.json")
+def test_load_file_detects_the_example_catalogue(examples_dir):
+    catalogue, fmt = adapters.load_file(examples_dir / "catalogue.json")
     assert fmt == "mcp"
     assert isinstance(catalogue, Catalogue)
     assert len(catalogue) == 20

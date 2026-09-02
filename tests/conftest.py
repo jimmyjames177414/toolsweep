@@ -15,6 +15,19 @@ EXAMPLES = Path(__file__).resolve().parents[1] / "examples" / "crm"
 
 
 @pytest.fixture(scope="session")
+def examples_dir() -> Path:
+    """The shipped example directory, as a fixture rather than an import.
+
+    A test that wants this path must take the fixture. Importing ``EXAMPLES`` from this
+    module as ``tests.conftest`` only works when the repository root happens to be on
+    ``sys.path`` - true under ``python -m pytest``, false under the ``pytest`` console
+    script that CI runs, because there is no ``tests/__init__.py``. A fixture has no such
+    dependency on how pytest was invoked.
+    """
+    return EXAMPLES
+
+
+@pytest.fixture(scope="session")
 def crm_catalogue() -> Catalogue:
     catalogue, _ = load_catalogue(EXAMPLES / "catalogue.json")
     return catalogue
