@@ -4,7 +4,7 @@
 
 # toolsweep
 
-**Varies one decision in your tool schema at a time — the naming, the enum wording, the nesting depth, how many tools you expose — and tells you which decision moved your tool-selection accuracy, with a confidence interval and a control arm.**
+**Varies one decision in your tool schema at a time: the naming, the enum wording, the nesting depth, how many tools you expose. Tells you which decision moved your tool-selection accuracy, with a confidence interval and a control arm.**
 
 [![CI](https://github.com/jimmyjames177414/toolsweep/actions/workflows/ci.yml/badge.svg)](https://github.com/jimmyjames177414/toolsweep/actions/workflows/ci.yml)
 [![licence](https://img.shields.io/badge/licence-Apache--2.0-green)](LICENSE)
@@ -20,15 +20,15 @@ are valid JSON Schema. Your linter passes, your MCP inspector passes, and the mo
 the wrong one. Something in that catalogue is costing you accuracy, and nothing tells you which
 decision it was.
 
-The obvious fix — have a model rewrite the descriptions — has already been tried and withdrawn.
-DSPy added `enable_tool_optimization` to GEPA in
-[PR #8928](https://github.com/stanfordnlp/dspy/pull/8928) (merged 2025-12-05) and **removed it
-again** in [PR #9223](https://github.com/stanfordnlp/dspy/pull/9223) (merged 2026-02-02). The
-contributor's own controlled experiment: baseline 23–28%, vanilla GEPA 35–39%, **tool
-optimisation 21–32%**. Automatic rewriting *lost* to leaving the schema alone.
+The obvious fix, having a model rewrite the descriptions, has already been tried and
+withdrawn. DSPy added `enable_tool_optimization` to GEPA in
+[PR #8928](https://github.com/stanfordnlp/dspy/pull/8928) (merged 2025-12-05) and removed it
+again in [PR #9223](https://github.com/stanfordnlp/dspy/pull/9223) (merged 2026-02-02). The
+contributor's own controlled experiment: baseline 23-28%, vanilla GEPA 35-39%, tool
+optimisation 21-32%. Automatic rewriting *lost* to leaving the schema alone.
 
 So toolsweep rewrites nothing. It changes one decision, re-runs a fixed task suite, and reports
-what that decision was worth — including, loudly, when the answer is nothing.
+what that decision was worth. Including, loudly, when the answer is nothing.
 
 ```console
 $ git clone -q https://github.com/jimmyjames177414/toolsweep && cd toolsweep
@@ -38,7 +38,7 @@ $ uvx --from git+https://github.com/jimmyjames177414/toolsweep toolsweep sweep \
 
 FACTOR                    level                 accuracy    Δ vs control              95% CI   p(Holm)
 ------------------------------------------------------------------------------------------------------
-control                   as-authored              72.5%               —                   —         —
+control                   as-authored              72.5%               -                   -         -
 naming.scheme             noun_verb                72.0%          -0.5pp        [-7.5, +6.5]     1.000
 naming.scheme             terse                    49.0%         -23.5pp      [-35.0, -12.5]     0.004
 naming.scheme             verbose                  71.5%          -1.0pp        [-8.5, +6.5]     1.000
@@ -71,18 +71,18 @@ INERT ON THIS CATALOGUE (not run, no calls spent)
 >
 > **Those numbers come from a mock, not a model.** `--provider mock` is a deterministic
 > lexical tool-picker that ships with toolsweep. It has exactly one deliberate flaw: it
-> confuses tools whose names differ only by a synonym of the same verb. **Nothing in that
-> table says anything about how any real language model behaves.**
+> confuses tools whose names differ only by a synonym of the same verb. Nothing in that
+> table says anything about how any real language model behaves.
 >
 > What it does demonstrate is that toolsweep works. The one effect we planted is the one it
 > found (`naming.synonyms`, +20.0pp, interval excluding zero). Four factors the mock is
-> provably blind to — enum wording, nesting, and both `params.required` levels — come back
-> exactly null **with intervals**, rather than being quietly reported as findings. A tool
-> that finds an effect everywhere is as useless as one that finds it nowhere; the null rows
-> are the point.
+> provably blind to (enum wording, nesting, and both `params.required` levels) come back
+> exactly null with intervals, rather than being quietly reported as findings. A tool that
+> finds an effect everywhere is as useless as one that finds it nowhere; the null rows are
+> the point.
 >
-> `naming.scheme=terse` moves too. That is real behaviour of *this mock* — abbreviating
-> `get_customer` to `getcust` removes the lexical overlap it matches on — and not a claim
+> `naming.scheme=terse` moves too. That is real behaviour of *this mock*: abbreviating
+> `get_customer` to `getcust` removes the lexical overlap it matches on. It is not a claim
 > about anything else.
 >
 > To measure your own catalogue, point `--provider openai-compatible` at a real endpoint.
@@ -101,7 +101,7 @@ $ uvx --from git+https://github.com/jimmyjames177414/toolsweep toolsweep sweep \
 
 FACTOR                    level                 accuracy    Δ vs control              95% CI   p(Holm)
 ------------------------------------------------------------------------------------------------------
-control                   as-authored              70.8%               —                   —         —
+control                   as-authored              70.8%               -                   -         -
 naming.synonyms           distinct_verbs           92.5%         +21.7pp       [+9.2, +34.2]     0.004
 description.negative      with                     68.3%          -2.5pp        [-7.5, +0.0]     1.000
 
@@ -137,8 +137,8 @@ uv tool install git+https://github.com/jimmyjames177414/toolsweep
 The example catalogue and suite live in the repository rather than the wheel, so clone it if
 you want to run the demo above.
 
-Python 3.10+. **Zero runtime dependencies** — the OpenAI-compatible provider is one POST
-built on `urllib`, and the statistics are pure Python.
+Python 3.10+, zero runtime dependencies. The OpenAI-compatible provider is one POST built
+on `urllib`, and the statistics are pure Python.
 
 ## Pointing it at a real model
 
@@ -162,9 +162,9 @@ toolsweep sweep tools.json suite.jsonl \
 `--dry-run` prints the exact number of model calls before you spend anything, `--max-calls`
 is a hard stop, and responses are cached on disk so a re-run costs nothing.
 
-Your catalogue can be **MCP `tools/list`, OpenAI tools, Anthropic tools, or raw JSON
-Schema** — the format is detected, and refused rather than guessed if it is ambiguous. Your
-suite is JSONL:
+Your catalogue can be MCP `tools/list`, OpenAI tools, Anthropic tools, or raw JSON Schema.
+The format is detected, and refused rather than guessed if it is ambiguous. Your suite is
+JSONL:
 
 ```json
 {"id": "crm.001", "prompt": "Pull the full record for customer id CUS-1041.",
@@ -189,12 +189,12 @@ Eight factors, each a pure, deterministic function `Catalogue -> Catalogue`. Run
 
 ## Three answers, and only one of them is a result
 
-These are reported **separately**, because collapsing them would be dishonest:
+These are reported separately, because collapsing them would be dishonest:
 
-- **an effect** — measured, with an interval;
-- **inert** — this level produced a catalogue byte-identical to the control, so no calls
+- **an effect**: measured, with an interval;
+- **inert**: this level produced a catalogue byte-identical to the control, so no calls
   were spent and nothing was measured;
-- **not measurable here** — the factor has no level that differs on your catalogue at all
+- **not measurable here**: the factor has no level that differs on your catalogue at all
   (`catalogue.size` when your suite expects every tool you expose).
 
 Only the first is a result. "We measured no effect" and "there was nothing to measure" are
@@ -204,25 +204,25 @@ different sentences.
 
 They are not optional:
 
-1. **A control arm, always.** Effect is `score(arm) − score(control)`, never `score(arm)`.
+1. A control arm, always. Effect is `score(arm) − score(control)`, never `score(arm)`.
    Arm zero is built before any factor is read and cannot be switched off.
-2. **An interval, always.** Percentile bootstrap over *items*, 10 000 resamples. An
-   `Effect` cannot even be constructed without its CI — the fields have no defaults, so
-   skipping the bootstrap is a `TypeError`, not a plausible-looking number.
-3. **Paired by item.** Arm and control run the same items; the paired difference is what
-   gets resampled.
-4. **N beside every number.** `n_items` and `repeats`, on every row.
-5. **An MDE**, so a null result is interpretable. Below it, this run could not have
-   detected an effect either way — which is not the same as there being none.
-6. **Holm-corrected p-values** alongside the raw ones, labelled.
-7. **Never a rounded-away CI.** `+20.0pp [+8.5, +31.0]`, not `+20.0pp`.
+2. An interval, always. Percentile bootstrap over *items*, 10 000 resamples. An `Effect`
+   cannot even be constructed without its CI: the fields have no defaults, so skipping the
+   bootstrap is a `TypeError`, not a plausible-looking number.
+3. Paired by item. Arm and control run the same items; the paired difference is what gets
+   resampled.
+4. N beside every number. `n_items` and `repeats`, on every row.
+5. An MDE, so a null result is interpretable. Below it, this run could not have detected an
+   effect either way, which is not the same as there being none.
+6. Holm-corrected p-values alongside the raw ones, labelled.
+7. Never a rounded-away CI. `+20.0pp [+8.5, +31.0]`, not `+20.0pp`.
 
 Statistical approach follows (and does not claim) Miller, *Adding Error Bars to Evals*,
 [arXiv:2411.00640](https://arxiv.org/abs/2411.00640).
 
-Runs are written as [CXS v0.1](schemas/) — `manifest.json`, `interventions.json`, an
+Runs are written as [CXS v0.1](schemas/): `manifest.json`, `interventions.json`, an
 append-only `trials.jsonl`, `outcomes.jsonl`, and both reports. Because outcomes are stored
-separately from trials, a finished run can be **re-scored without calling anything**, and a
+separately from trials, a finished run can be re-scored without calling anything, and a
 crashed run resumes.
 
 ## Two of the three things you probably want are done better elsewhere
@@ -231,13 +231,13 @@ Read this before you decide whether you want toolsweep.
 
 | Project | What it does |
 |---|---|
-| **[mcpgrade](https://github.com/TengByte/mcpgrade)** | Scores your catalogue **as authored** — synthesises tasks, shows a model your real tools blind, measures tool selection, argument validity, refusal accuracy **and confusion pairs**. 3-round calibration, `envFingerprint`, a CI action, a 36-server leaderboard, ~2,500 npm downloads a month. |
-| **[GEPA MCP adapter](https://github.com/gepa-ai/gepa/tree/main/src/gepa/adapters/mcp_adapter)** | **Evolves your `tool_description`** against your metric with real rollouts. |
-| **BFCL / Gorilla, τ-bench, ToolBench, API-Bank, MCP-Universe** | Benchmark **models** on a fixed corpus. BFCL V4 varies serialisation format only, over its own corpus, to rank models. |
+| **[mcpgrade](https://github.com/TengByte/mcpgrade)** | Scores your catalogue *as authored*: synthesises tasks, shows a model your real tools blind, measures tool selection, argument validity, refusal accuracy and confusion pairs. 3-round calibration, `envFingerprint`, a CI action, a 36-server leaderboard, ~2,500 npm downloads a month. |
+| **[GEPA MCP adapter](https://github.com/gepa-ai/gepa/tree/main/src/gepa/adapters/mcp_adapter)** | Evolves your `tool_description` against your metric with real rollouts. |
+| **BFCL / Gorilla, τ-bench, ToolBench, API-Bank, MCP-Universe** | Benchmark *models* on a fixed corpus. BFCL V4 varies serialisation format only, over its own corpus, to rank models. |
 | **MCP inspectors, linters, `mcp-scan`** | Validity, protocol conformance, security. Not usability. |
 
-> **To score your catalogue as-authored, use mcpgrade. To evolve your descriptions, use
-> GEPA. Use toolsweep to find out which schema decision is costing you accuracy.**
+> To score your catalogue as-authored, use mcpgrade. To evolve your descriptions, use GEPA.
+> Use toolsweep to find out which schema decision is costing you accuracy.
 
 What is left, and all toolsweep claims, is the **controlled multi-factor sweep**: schema
 decisions treated as independent experimental factors, varied against a fixed suite, with
@@ -258,45 +258,45 @@ contributor's own controlled experiment, and the feature was removed.
 
 So a tool that confidently rewrites your schema is selling something it cannot back. A
 diagnostic that tells you *which variable matters* and leaves the rewrite to you is the
-honest shape for this problem. If you do want an optimiser, use GEPA — it is better at it
+honest shape for this problem. If you do want an optimiser, use GEPA. It is better at it
 than anything we would build.
 
 ## What it cannot tell you
 
-- **Results do not transfer.** They are specific to one model, one catalogue and one suite.
+- Results do not transfer. They are specific to one model, one catalogue and one suite.
   Change any of the three and you must re-run. toolsweep does not imply otherwise anywhere.
-- **The suite is the measurement instrument.** A bad suite produces confident wrong answers,
-  and nothing downstream can rescue it. Ours is 40 items over 14 of 20 tools; that is small.
-- **Single-factor effects only.** Interactions between factors are not measured. Two changes
-  that each look harmless alone may not be.
-- **Renaming changes more than the name.** It changes token count, position, and how much
+- The suite is the measurement instrument. A bad suite produces confident wrong answers, and
+  nothing downstream can rescue it. Ours is 40 items over 14 of 20 tools; that is small.
+- Single-factor effects only. Interactions between factors are not measured. Two changes that
+  each look harmless alone may not be.
+- Renaming changes more than the name. It changes token count, position, and how much
   information the name carries. Measured on the shipped example: with the mock's confusion
   planted at *zero*, `naming.synonyms` still shows **+5.0pp [−5.0, +15.0]**, purely because
   `get_customer_by_email` carries a discriminating token that `lookup_customer` does not.
   toolsweep cannot separate that from the confusion it removed. It does correctly decline to
-  call it an effect — the interval spans zero — but the confound is real and unremovable.
-- **40 items is underpowered for small effects.** The demo run's MDE is 16.2pp. Anything
-  smaller than that was not detectable at that N, whatever the table says.
-- **The mock's metrics are degenerate by construction.** It never hallucinates and never
-  declines (both rates default to 0.0), and it derives arguments from the suite, so
-  hallucination rate, no-call rate, argument validity and argument match carry no
-  information in a mock run. They are measured properly against a real provider.
-- **Name analysis is English-centric.** The verb classes, abbreviations and pluralisation
-  rules in `factors/_text.py` are small hand-written tables. A catalogue named in another
-  language, or with unusual conventions, will parse poorly and the naming factors will
-  quietly abstain rather than mangle names — but they will also measure less.
-- **No multi-turn.** One prompt, one tool call. Real agents loop.
+  call it an effect (the interval spans zero), but the confound is real and unremovable.
+- 40 items is underpowered for small effects. The demo run's MDE is 16.2pp. Anything smaller
+  than that was not detectable at that N, whatever the table says.
+- The mock's metrics are degenerate by construction. It never hallucinates and never declines
+  (both rates default to 0.0), and it derives arguments from the suite, so hallucination rate,
+  no-call rate, argument validity and argument match carry no information in a mock run. They
+  are measured properly against a real provider.
+- Name analysis is English-centric. The verb classes, abbreviations and pluralisation rules in
+  `factors/_text.py` are small hand-written tables. A catalogue named in another language, or
+  with unusual conventions, will parse poorly and the naming factors will quietly abstain
+  rather than mangle names. But they will also measure less.
+- No multi-turn. One prompt, one tool call. Real agents loop.
 
 ## Not built yet
 
 Genuinely absent rather than stubbed, and tracked as issues:
 
-- **Interaction effects** between factors — the current sweep is one-factor-at-a-time.
-- **`tool.order` and `param.order`** as factors. Cheap and planned; the only wrinkle is that
+- Interaction effects between factors. The current sweep is one-factor-at-a-time.
+- `tool.order` and `param.order` as factors. Cheap and planned; the only wrinkle is that
   every level has to be idempotent, so `reverse` is not allowed (applying it twice undoes it).
-- **Tool *retrieval* systems** — catalogues assembled per query rather than fixed.
-- **Multi-turn** tool use.
-- **A shared public suite** so results are comparable between catalogues.
+- Tool *retrieval* systems: catalogues assembled per query rather than fixed.
+- Multi-turn tool use.
+- A shared public suite so results are comparable between catalogues.
 
 ## Contributing
 
@@ -314,8 +314,8 @@ uv run ruff check . && uv run ruff format --check .
 uv run mypy --strict src/
 ```
 
-The whole suite runs offline with **no secrets configured at all**. If a test needs a key it
-is marked `live` and deselected by default.
+The whole suite runs offline with no secrets configured at all. If a test needs a key it is
+marked `live` and deselected by default.
 
 ---
 

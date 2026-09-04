@@ -227,7 +227,7 @@ def _build_cache(args: argparse.Namespace) -> ResponseCache:
 def _render_dry_run(estimate: Any, provider: Provider) -> str:
     descriptor = provider.descriptor
     lines = [
-        "DRY RUN — nothing was sent and nothing was spent.",
+        "DRY RUN: nothing was sent and nothing was spent.",
         "",
         f"  provider            {descriptor.provider} ({descriptor.model})",
         f"  arms                {estimate.live_arms} live"
@@ -286,7 +286,7 @@ def _cmd_confusion(args: argparse.Namespace) -> int:
     total = int(payload.get("control", {}).get("n_trials", 0)) or sum(int(r["count"]) for r in rows)
     width = max(len(str(r["expected"])) for r in rows) + 2
     got_width = max(len(str(r["got"])) for r in rows) + 2
-    print(f"CONFUSION MATRIX — arm 'control' ({total} trials, names in as-authored space)")
+    print(f"CONFUSION MATRIX: arm 'control' ({total} trials, names in as-authored space)")
     print()
     print(f"  {'expected':<{width}}{'got':<{got_width}}{'count':>7}{'share':>9}")
     for row in rows:

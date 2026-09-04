@@ -30,7 +30,7 @@ def render_table(result: SweepResult) -> str:
     lines = [HEADER, "-" * len(HEADER)]
     control = result.metrics[CONTROL_ARM_ID]
     lines.append(
-        f"{'control':<26}{'as-authored':<20}{_pct(control.accuracy):>10}{'—':>16}{'—':>20}{'—':>10}"
+        f"{'control':<26}{'as-authored':<20}{_pct(control.accuracy):>10}{'-':>16}{'-':>20}{'-':>10}"
     )
 
     by_id = {e.label: e for e in result.effects}
@@ -138,7 +138,7 @@ def render_confusion(result: SweepResult, *, arm_id: str = CONTROL_ARM_ID) -> st
     total = len(scores)
     width = max(len(e) for e, _ in counts) + 2
     lines = [
-        f"CONFUSION MATRIX — arm {arm_id!r} ({total} trials, names in as-authored space)",
+        f"CONFUSION MATRIX: arm {arm_id!r} ({total} trials, names in as-authored space)",
         "",
         f"  {'expected':<{width}}{'got':<{width}}{'count':>7}{'share':>9}",
     ]
@@ -246,7 +246,7 @@ def render_markdown(result: SweepResult, *, command: str = "") -> str:
         "",
         "| factor | level | accuracy | Δ vs control | 95% CI | p (raw) | p (Holm) |",
         "| --- | --- | ---: | ---: | :---: | ---: | ---: |",
-        f"| control | as-authored | {_pct(control.accuracy)} | — | — | — | — |",
+        f"| control | as-authored | {_pct(control.accuracy)} | - | - | - | - |",
     ]
 
     by_id = {e.label: e for e in result.effects}
