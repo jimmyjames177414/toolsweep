@@ -1,48 +1,39 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/jimmyjames177414/toolsweep/main/docs/banner.jpg" alt="toolsweep" width="100%">
-</p>
+<div align="center">
 
-<h1 align="center">toolsweep</h1>
+<img src="https://raw.githubusercontent.com/jimmyjames177414/toolsweep/main/docs/banner.jpg" alt="toolsweep" width="100%">
 
-<p align="center"><em>Your tool schema is valid. Which decision in it is costing you accuracy?</em></p>
+# toolsweep
 
-<p align="center">
-  <a href="#install"><img alt="python" src="https://img.shields.io/badge/python-3.10%20%E2%80%93%203.13-blue"></a>
-  <a href="LICENSE"><img alt="licence" src="https://img.shields.io/badge/licence-Apache--2.0-green"></a>
-  <img alt="dependencies" src="https://img.shields.io/badge/runtime%20deps-0-brightgreen">
-</p>
+**Varies one decision in your tool schema at a time — the naming, the enum wording, the nesting depth, how many tools you expose — and tells you which decision moved your tool-selection accuracy, with a confidence interval and a control arm.**
+
+[![CI](https://github.com/jimmyjames177414/toolsweep/actions/workflows/ci.yml/badge.svg)](https://github.com/jimmyjames177414/toolsweep/actions/workflows/ci.yml)
+[![licence](https://img.shields.io/badge/licence-Apache--2.0-green)](LICENSE)
+[![python](https://img.shields.io/badge/python-3.10%20%E2%80%93%203.13-blue)](#install)
+[![runtime deps](https://img.shields.io/badge/runtime%20deps-0-brightgreen)](#install)
+
+</div>
 
 ---
 
-## WHAT IS THIS?
+You expose `get_customer`, `find_customer`, `search_customer` and `lookup_customer`. All four
+are valid JSON Schema. Your linter passes, your MCP inspector passes, and the model still picks
+the wrong one. Something in that catalogue is costing you accuracy, and nothing tells you which
+decision it was.
 
-toolsweep changes **one decision at a time** in your tool catalogue — the naming scheme,
-the enum wording, the nesting depth, how many tools you expose — runs a fixed task suite
-against each version, and tells you which decision moved your tool-selection accuracy, with
-a confidence interval and a control arm.
+The obvious fix — have a model rewrite the descriptions — has already been tried and withdrawn.
+DSPy added `enable_tool_optimization` to GEPA in
+[PR #8928](https://github.com/stanfordnlp/dspy/pull/8928) (merged 2025-12-05) and **removed it
+again** in [PR #9223](https://github.com/stanfordnlp/dspy/pull/9223) (merged 2026-02-02). The
+contributor's own controlled experiment: baseline 23–28%, vanilla GEPA 35–39%, **tool
+optimisation 21–32%**. Automatic rewriting *lost* to leaving the schema alone.
 
-## WHY DOES IT EXIST?
-
-You expose `get_customer`, `find_customer`, `search_customer` and `lookup_customer`. All
-four are valid JSON Schema. Your linter passes. Your MCP inspector passes. And the model
-still picks the wrong one a fifth of the time.
-
-Schema *validity* is not schema *usability*. Plenty of tools will tell you your catalogue
-scores 81%. Nothing tells you **which of your schema decisions** is the one costing you the
-other 19% — whether it is the four near-synonym names, or the nesting depth, or the fact
-that you exposed 40 tools instead of 12. Guessing is expensive: you rewrite the whole
-catalogue and re-measure, and you still cannot attribute the change.
-
-toolsweep is a diagnostic. It does not rewrite anything. It tells you where to look.
-
-## SHOW ME IT WORKING
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/jimmyjames177414/toolsweep/main/docs/demo.png" alt="toolsweep running the example CRM sweep" width="100%">
-</p>
+So toolsweep rewrites nothing. It changes one decision, re-runs a fixed task suite, and reports
+what that decision was worth — including, loudly, when the answer is nothing.
 
 ```console
-$ uvx toolsweep sweep examples/crm/catalogue.json examples/crm/suite.jsonl \
+$ git clone -q https://github.com/jimmyjames177414/toolsweep && cd toolsweep
+$ uvx --from git+https://github.com/jimmyjames177414/toolsweep toolsweep sweep \
+      examples/crm/catalogue.json examples/crm/suite.jsonl \
       --factors all --provider mock --repeats 5 --seed 7
 
 FACTOR                    level                 accuracy    Δ vs control              95% CI   p(Holm)
@@ -96,10 +87,15 @@ INERT ON THIS CATALOGUE (not run, no calls spent)
 >
 > To measure your own catalogue, point `--provider openai-compatible` at a real endpoint.
 
+<div align="center">
+<img src="https://raw.githubusercontent.com/jimmyjames177414/toolsweep/main/docs/demo.png" alt="toolsweep running the example CRM sweep" width="100%">
+</div>
+
 Reproduce it with no API key and no network, from the recorded cassette:
 
 ```console
-$ uvx toolsweep sweep examples/crm/catalogue.json examples/crm/suite.jsonl \
+$ uvx --from git+https://github.com/jimmyjames177414/toolsweep toolsweep sweep \
+      examples/crm/catalogue.json examples/crm/suite.jsonl \
       --factors naming.synonyms,description.negative \
       --provider cassette --cassette examples/crm/cassette.json --repeats 3 --seed 7
 
@@ -125,16 +121,26 @@ cassette that does not say which it is.
 
 ## Install
 
+Nothing is published to PyPI. Run it straight from the repository:
+
 ```bash
-uvx toolsweep --help          # no clone, no install
-pipx run toolsweep --help
-pip install toolsweep
+uvx --from git+https://github.com/jimmyjames177414/toolsweep toolsweep --help
 ```
+
+Or put it on your `PATH`, which is what the rest of this README assumes when it writes a bare
+`toolsweep`:
+
+```bash
+uv tool install git+https://github.com/jimmyjames177414/toolsweep
+```
+
+The example catalogue and suite live in the repository rather than the wheel, so clone it if
+you want to run the demo above.
 
 Python 3.10+. **Zero runtime dependencies** — the OpenAI-compatible provider is one POST
 built on `urllib`, and the statistics are pure Python.
 
-### Against a real model
+## Pointing it at a real model
 
 Any OpenAI-compatible `/v1/chat/completions` endpoint works: Ollama, vLLM, LM Studio,
 llama.cpp, OpenRouter, Together, Groq, DeepSeek, OpenAI. Provider choice is a URL, never a
@@ -165,7 +171,7 @@ suite is JSONL:
  "expected_tool": "get_customer", "expected_args": {"customer_id": "CUS-1041"}}
 ```
 
-## What it varies
+## Which decisions it varies
 
 Eight factors, each a pure, deterministic function `Catalogue -> Catalogue`. Run
 `toolsweep factors` to see the levels for your own catalogue.
@@ -181,7 +187,9 @@ Eight factors, each a pure, deterministic function `Catalogue -> Catalogue`. Run
 | `params.required` | every parameter required vs only the genuinely essential ones |
 | `catalogue.size` | how many tools are exposed at once (never drops a tool your suite expects) |
 
-Three states are reported **separately**, because collapsing them would be dishonest:
+## Three answers, and only one of them is a result
+
+These are reported **separately**, because collapsing them would be dishonest:
 
 - **an effect** — measured, with an interval;
 - **inert** — this level produced a catalogue byte-identical to the control, so no calls
@@ -192,9 +200,9 @@ Three states are reported **separately**, because collapsing them would be disho
 Only the first is a result. "We measured no effect" and "there was nothing to measure" are
 different sentences.
 
-## How it reports
+## Rules every number here obeys
 
-Every number obeys the same rules, and they are not optional:
+They are not optional:
 
 1. **A control arm, always.** Effect is `score(arm) − score(control)`, never `score(arm)`.
    Arm zero is built before any factor is read and cannot be switched off.
@@ -217,10 +225,9 @@ append-only `trials.jsonl`, `outcomes.jsonl`, and both reports. Because outcomes
 separately from trials, a finished run can be **re-scored without calling anything**, and a
 crashed run resumes.
 
-## Prior art
+## Two of the three things you probably want are done better elsewhere
 
-Read this section before you decide whether you want toolsweep. Two of the three obvious
-things you might want are already done better elsewhere.
+Read this before you decide whether you want toolsweep.
 
 | Project | What it does |
 |---|---|
@@ -245,22 +252,16 @@ full audit, including the claims this project may not make.
 
 ### Why there are no rewrite suggestions
 
-toolsweep will never hand you a rewritten description. That is deliberate, and there is
-public evidence behind it.
-
-DSPy added `enable_tool_optimization` to GEPA in
-[PR #8928](https://github.com/stanfordnlp/dspy/pull/8928) (merged 2025-12-05) and
-**removed it again** in [PR #9223](https://github.com/stanfordnlp/dspy/pull/9223) (merged
-2026-02-02). The contributor's own controlled experiment: baseline 23–28%, vanilla GEPA
-35–39%, **tool optimisation 21–32%**. Automatic tool-description rewriting *lost* to not
-doing it at all.
+toolsweep will never hand you a rewritten description. That is the DSPy result at the top of
+this file: automatic tool-description rewriting *lost* to not doing it at all, in the
+contributor's own controlled experiment, and the feature was removed.
 
 So a tool that confidently rewrites your schema is selling something it cannot back. A
 diagnostic that tells you *which variable matters* and leaves the rewrite to you is the
 honest shape for this problem. If you do want an optimiser, use GEPA — it is better at it
 than anything we would build.
 
-## Honest limitations
+## What it cannot tell you
 
 - **Results do not transfer.** They are specific to one model, one catalogue and one suite.
   Change any of the three and you must re-run. toolsweep does not imply otherwise anywhere.
